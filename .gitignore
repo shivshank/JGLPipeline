@@ -1,12 +1,14 @@
-# Libraries
+/build
 /libs
+*.class
 
-# Eclipse files
 .classpath
 .settings
 .project
 
-*.class
+# ========================
+# Default Stuff
+# ========================
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
