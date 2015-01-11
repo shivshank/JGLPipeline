@@ -1,4 +1,4 @@
-<project name="JGLPipeline" basedir="." default="all">
+<project name="JGLPipeline" basedir="." default="compile">
     
     <property name="src" value="src" />
     <property name="build" value="build" />
@@ -6,7 +6,7 @@
     
     <target name="init">
         <tstamp/>
-        <mkdri dir="${build}" />
+        <mkdir dir="${build}" />
     </target>
     
     <target name="compile" depends="init">
@@ -18,7 +18,7 @@
     </target>
     
     <target name="dist" depends="compile">
-        <mkdir dir="${bin}">
+        <mkdir dir="${bin}" />
         <jar jarfile="${bin}/JGLPipeline-${DSTAMP}.jar" basedir="${build}" />
     </target>
     
