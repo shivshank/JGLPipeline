@@ -2,7 +2,7 @@ package shivshank.pipeline;
 
 import java.nio.ByteBuffer;
 
-import org.lwjgl.opengl.GL15;
+import static org.lwjgl.opengl.GL15.*;
 
 /**
  * Represents an OpenGL Buffer Object.
@@ -17,7 +17,7 @@ public class GLBuffer {
 	private int glUsage;
 	
 	public GLBuffer(int target) {
-		this(target, GL15.GL_STATIC_DRAW);
+		this(target, GL_STATIC_DRAW);
 	}
 	
 	public GLBuffer(int target, int usage) {
@@ -32,7 +32,7 @@ public class GLBuffer {
 	 * @return true if OpenGL object creation succeeded.
 	 */
 	public boolean create() {
-		glName = GL15.glGenBuffers();
+		glName = glGenBuffers();
 		return glName != 0;
 	}
 	
@@ -42,7 +42,7 @@ public class GLBuffer {
 	 * @param data
 	 */
 	public void push(ByteBuffer data) {
-		GL15.glBufferData(glTarget, data, glUsage);
+		glBufferData(glTarget, data, glUsage);
 	}
 	
 	/**
@@ -52,7 +52,7 @@ public class GLBuffer {
 	 * @param data The raw data
 	 */
 	public void update(long byteOffset, ByteBuffer data) {
-		GL15.glBufferSubData(glTarget, byteOffset, data);
+		glBufferSubData(glTarget, byteOffset, data);
 	}
 	
 	/**
@@ -63,12 +63,12 @@ public class GLBuffer {
 	 * 
 	 */
 	public void destroy() {
-		GL15.glDeleteBuffers(glName);
+		glDeleteBuffers(glName);
 		glName = 0;
 	}
 	
 	void bind() {
-		GL15.glBindBuffer(glTarget, glName);
+		glBindBuffer(glTarget, glName);
 	}
 	
 	/**
@@ -79,7 +79,7 @@ public class GLBuffer {
 	 * @param target An integer constant such as GL_ARRAY_BUFFER
 	 */
 	static void unbind(int target) {
-		GL15.glBindBuffer(target, 0);
+		glBindBuffer(target, 0);
 		// TODO: Technically its local to the thread's context... does that
 		// 		 need to be handled differently?
 	}
