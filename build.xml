@@ -11,15 +11,15 @@
     
     <target name="compile" depends="init">
         <javac srcdir="${src}" destdir="${build}">
+            <classpath>
+                <pathelement path="libs/lwjgl/lwjgl.jar"/>
+            </classpath>
+        </javac>
     </target>
     
     <target name="dist" depends="compile">
         <mkdir dir="${bin}">
-        <jar jarfile="${bin}/JGLPipeline-${DSTAMP}.jar" basedir="${build}">
-            <classpath>
-                <pathelement path="libs/lwjgl/lwjgl.jar"/>
-            </classpath>
-        </jar>
+        <jar jarfile="${bin}/JGLPipeline-${DSTAMP}.jar" basedir="${build}" />
     </target>
     
     <target name="clean">
