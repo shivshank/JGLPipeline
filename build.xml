@@ -1,0 +1,29 @@
+<project name="JGLPipeline" basedir="." default="all">
+    
+    <property name="src" value="src" />
+    <property name="build" value="build" />
+    <property name="bin" value="bin" />
+    
+    <target name="init">
+        <tstamp/>
+        <mkdri dir="${build}" />
+    </target>
+    
+    <target name="compile" depends="init">
+        <javac srcdir="${src}" destdir="${build}">
+    </target>
+    
+    <target name="dist" depends="compile">
+        <mkdir dir="${bin}">
+        <jar jarfile="${bin}/JGLPipeline-${DSTAMP}.jar" basedir="${build}">
+            <classpath>
+                <pathelement path="libs/lwjgl/lwjgl.jar"/>
+            </classpath>
+        </jar>
+    </target>
+    
+    <target name="clean">
+        <delete dir="${bin}" />
+        <delete dir="${build}" />
+    </target>
+</project>
