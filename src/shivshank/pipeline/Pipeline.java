@@ -136,9 +136,53 @@ public class Pipeline {
         }
 	}
     
-    
+        /**
+         * @throws PipelineException if shader allocation or compilation fails.
+         */
 	public static class Shader {
-		
+		private int glName;
+        private int glShaderType;
+        private boolean autoDelete;
+        
+        public Shader(int shaderType) {
+            this(shaderType, true);
+        }
+        
+        public Shader(int shaderType, boolean autoDelete) {
+            glShaderType = shaderType;
+            this.autoDelete = autoDelete;
+        }
+        
+        public void create(String source) {
+            glName = glCreateShader(glShaderType);
+            
+            if (glName == 0)
+                throw new PipelineException("ERROR: OpenGL failed to create "
+                                           + "shader.");
+
+            glShaderSource(glName, source);
+            glCompileShader(glName);
+            if (glGetShaderi(glName, GL_COMPILE_STATUS) != GL_TRUE) {
+                String infolog = glGetShaderInfoLog(glName);
+                throw new PipelineException("ERROR: OpenGL failed to compile "
+                    + "shader:\n" + infolog);
+            }
+        }
+        
+        public boolean isCreated() {
+            return glName != 0;
+        }
+            
+            /**
+             * Free the shader.
+             */
+        public void destroy() {
+            glDeleteShader(glName);
+        }
+        
+        protected boolean autoDestroy() {
+            return autoDelete;
+        }
 	}
 	
 }
