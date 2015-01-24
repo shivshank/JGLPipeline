@@ -1,6 +1,7 @@
 package shivshank.pipeline;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -102,7 +103,7 @@ public class Model {
     }
     
     protected void enable() {
-        for (Map.Entry<GLBuffer, ShaderInput> e : captures) {
+        for (Map.Entry<GLBuffer, ShaderInput> e : captures.entrySet()) {
             e.getKey().bind();
             e.getValue().enable();
         }
@@ -110,7 +111,7 @@ public class Model {
     }
     
     protected void disable() {
-        for (Map.Entry<GLBuffer, ShaderInput> e : captures) {
+        for (Map.Entry<GLBuffer, ShaderInput> e : captures.entrySet()) {
             e.getValue().enable();
         }
     }
