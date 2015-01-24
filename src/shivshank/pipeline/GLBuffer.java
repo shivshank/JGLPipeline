@@ -67,7 +67,7 @@ public class GLBuffer {
 		glName = 0;
 	}
 	
-	void bind() {
+	protected void bind() {
 		glBindBuffer(glTarget, glName);
 	}
 	
