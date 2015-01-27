@@ -71,7 +71,7 @@ public class Model {
         public void enable() {
             glEnableVertexAttribArray(index);
             glVertexAttribPointer(index, comps, type,
-                                       normalized, offset, stride);
+                                  normalized, offset, stride);
         }
         
             /**
