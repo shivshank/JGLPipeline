@@ -66,7 +66,8 @@ public class Model {
         }
         
             /**
-             * Enable relevant shader input in OpenGL.
+             * Enable relevant shader input in OpenGL and bind that input
+             * to the current GL_ARRAY_BUFFER.
              */
         public void enable() {
             glEnableVertexAttribArray(index);
@@ -112,7 +113,7 @@ public class Model {
     
     protected void disable() {
         for (Map.Entry<GLBuffer, ShaderInput> e : captures.entrySet()) {
-            e.getValue().enable();
+            e.getValue().disable();
         }
     }
 }
