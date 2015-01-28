@@ -88,6 +88,7 @@ public class Model {
 	}
     
     private HashMap<GLBuffer, ShaderInput> captures;
+    private int count;
     
     public Model() {
         captures = new HashMap<GLBuffer, ShaderInput>();
@@ -98,6 +99,14 @@ public class Model {
     
     public void capture(GLBuffer buffer, ShaderInput in) {
         captures.put(buffer, in);
+    }
+    
+    public void setCount(int c) {
+        count = c;
+    }
+    
+    public int getCount() {
+        return count;
     }
     
     public void destroy() {
