@@ -78,7 +78,7 @@ public class GLBuffer {
 	 *  
 	 * @param target An integer constant such as GL_ARRAY_BUFFER
 	 */
-	static void unbind(int target) {
+	protected static void unbind(int target) {
 		glBindBuffer(target, 0);
 		// TODO: Technically its local to the thread's context... does that
 		// 		 need to be handled differently?
