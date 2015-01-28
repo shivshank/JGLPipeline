@@ -111,13 +111,11 @@ public class Pipeline {
 	}
 	
     private int glName;
-    private Shader[] shaders;
     
-    public Pipeline(Shader ... shaders) {
-        this.shaders = shaders;
+    public Pipeline() {
     }
     
-    public void create() {
+    public void create(Shader ... shaders) {
         glName = glCreateProgram();
         
         if (glName == 0) {
@@ -152,10 +150,19 @@ public class Pipeline {
     public void destroy() {
         glDeleteProgram(glName);
         glName = 0;
-        shaders = null;
+    }
+    
+    public void render(Model m) {
+        glUseProgram(glName);
+        m.enable();
+        
+        draw(m);
+        
+        m.disable();
+        glUseProgram(0);
     }
     
     public void draw(Model m) {
-        // TODO
+        glDrawArrays(GL_TRIANGLES, 0, m.getCount());
     }
 }
