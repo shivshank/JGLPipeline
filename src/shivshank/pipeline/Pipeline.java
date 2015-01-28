@@ -7,19 +7,19 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 
-    /**
-     * JGLPipeline's central class. Used to setup, render, and cleanup.
-     * <p/>
-     * <code>Pipeline</code> records all state needed to render. It does not
-     * store much of the actual data, like vertices and uniforms; Pipeline
-     * only stores references.
-     * <p/>
-     * In terms of OpenGL, <code>Pipeline</code> couples a ProgramPipeline (or
-     * OpenGL Program, if not supported) with VAOs (or their related state, if
-     * not supported).
-     * <p/>
-     * NOTE: Separable programs and VAOs not yet supported.
-     */
+/**
+ * JGLPipeline's central class. Used to setup, render, and cleanup.
+ * <p/>
+ * <code>Pipeline</code> records all state needed to render. It does not
+ * store much of the actual data, like vertices and uniforms; Pipeline
+ * only stores references.
+ * <p/>
+ * In terms of OpenGL, <code>Pipeline</code> couples a ProgramPipeline (or
+ * OpenGL Program, if not supported) with VAOs (or their related state, if
+ * not supported).
+ * <p/>
+ * NOTE: Separable programs and VAOs not yet supported.
+ */
 public class Pipeline {
     
     public static boolean checkGLError() {
@@ -27,7 +27,8 @@ public class Pipeline {
     }
     
     public static boolean checkGLError(String message) {
-        // TODO: Should use actual logging
+        // TODO: Should use actual logging?
+        // LWJGL also contains a method for this...
         if (message == null)
             message = "OPENGL ERROR: ";
 
@@ -61,23 +62,42 @@ public class Pipeline {
         return occured;
     }
     
-        /**
-         * @throws PipelineException if shader allocation or compilation fails.
-         */
 	public static class Shader {
 		protected int glName;
         private int glShaderType;
         private boolean autoDelete;
         
+        /**
+         * Create a new shader that will only be used in one program.
+         * </p>
+         * After program creation, this shader will be automatically
+         * invalidated. Continuing to use this object will result in undefined
+         * behavior.
+         * </p>
+         * Pass false as second parameter to disable this behavior.
+         *
+         * @param shaderType the OpenGL shader type, such as GL_VERTEX_SHADER
+         */
         public Shader(int shaderType) {
             this(shaderType, true);
         }
         
+        /**
+         * Create a shader object that can be used with many programs.
+         *
+         * @param shaderType the OpenGL shader type, such as GL_VERTEX_SHADER
+         * @param autoDelete enable/disable auto invalidation after linking
+         */
         public Shader(int shaderType, boolean autoDelete) {
             glShaderType = shaderType;
             this.autoDelete = autoDelete;
         }
         
+        /**
+         * Create the OpenGL portion of the shader and upload the source code.
+         *
+         * @throws PipelineException if shader allocation or compilation fails.
+         */
         public void create(String source) {
             glName = glCreateShader(glShaderType);
             
@@ -98,9 +118,9 @@ public class Pipeline {
             return glName != 0;
         }
             
-            /**
-             * Free the shader.
-             */
+        /**
+         * Free the shader.
+         */
         public void destroy() {
             glDeleteShader(glName);
         }
