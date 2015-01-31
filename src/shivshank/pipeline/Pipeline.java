@@ -146,7 +146,10 @@ public class Pipeline {
         for (Shader c : shaders) {
             if (!c.isCreated()) {
                 throw new PipelineException("ERROR: Shader must be created "
-                                          + "before program creation!");
+                                          + "before program creation! "
+                                          + "If you are reusing a shader, make "
+                                          + "sure to set autoDelete parameter "
+                                          + "on construction.");
             }
             glAttachShader(glName, c.glName);
             if (c.autoDestroy())
