@@ -3,6 +3,7 @@
     <property name="src" value="src" />
     <property name="build" value="build" />
     <property name="bin" value="bin" />
+    <property name="doc" value="doc" />
     
     <target name="init">
         <tstamp/>
@@ -22,6 +23,16 @@
         <jar jarfile="${bin}/JGLPipeline-${DSTAMP}.jar" basedir="${build}" />
     </target>
     
+    <target name="doc" depends="compile">
+        <mkdir dir="${doc}" />
+        <javadoc packagenames="src" sourcepath="${src}"
+                 destdir="${doc}">
+            <packageset dir="${src}" defaultexcludes="yes">
+                <include name="**" />
+            </packageset>
+        </javadoc>
+    </target>
+
     <target name="clean">
         <delete dir="${bin}" />
         <delete dir="${build}" />
