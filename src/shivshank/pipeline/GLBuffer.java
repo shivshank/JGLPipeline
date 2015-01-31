@@ -6,7 +6,7 @@ import static org.lwjgl.opengl.GL15.*;
 
 /**
  * Represents an OpenGL Buffer Object.
- * </p>
+ * <p>
  * Stores the associated name and target.
  */
 public class GLBuffer {
@@ -48,7 +48,7 @@ public class GLBuffer {
 	/**
 	 * Update buffer storage without reallocating.
 	 * 
-	 * @param offset The offset into the storage (in bytes)
+	 * @param byteOffset The offset into the storage (in bytes)
 	 * @param data The raw data
 	 */
 	public void update(long byteOffset, ByteBuffer data) {
@@ -57,7 +57,7 @@ public class GLBuffer {
 	
 	/**
 	 * Free the storage on the GPU.
-	 * <p/>
+	 * <p>
 	 * If you are just loading new data, don't delete. Instead, reuse the
 	 * buffer with {@link #push(ByteBuffer)}.
 	 * 
@@ -73,7 +73,7 @@ public class GLBuffer {
 	
 	/**
 	 * Unbind the buffer bound to target.
-	 * <p/>
+	 * <p>
 	 * Binding a buffer to a target is a static/global state change.
 	 *  
 	 * @param target An integer constant such as GL_ARRAY_BUFFER

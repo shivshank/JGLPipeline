@@ -10,11 +10,11 @@ public class Model {
 
         /**
          * Used to reference the layout and storage of vertex shader inputs.
-         * <p/>
+         * <p>
          * Shader inputs are also known as vertex attributes. A ShaderInput 
          * is independent of its source. Buffer bindings are created at capture
          * time.
-         * <p/>
+         * <p>
          * The state of a <code>ShaderInput</code> is typically used for calls to
          * glVertexAttribPointer.
          */
@@ -48,7 +48,7 @@ public class Model {
         
             /**
              * Assign an index; prepare this ShaderInput for capture.
-             * <p/>
+             * <p>
              * This must be called before capture.
              *
              * @return this for assignment convenience

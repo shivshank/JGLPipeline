@@ -9,21 +9,21 @@ import static org.lwjgl.opengl.GL20.*;
 
 /**
  * Represents an OpenGL 2D Texture.
- * </p>
+ * <p>
  * Stores the associated name and target.
- * </p>
+ * <p>
  * Before a texture is used it MUST be created and configured. Create the object
  * first and then call the appropriate configuration methods.
- * </p>
+ * <p>
  * After configuration, push a texture image.
- * </p>
+ * <p>
  * To use a GLTexture, capture it with a model or render manually by calling
- * {@link #enable()} and {@link #disable()}.
- * </p>
+ * {@link #enable(int, int)} and {@link #disable()}.
+ * <p>
  * If you create a texture, be sure to specify the number of mipmaps and upload
  * the proper amount, otherwise the texture is incomplete and cannot be
  * rendered.
- * </p>
+ * <p>
  * This class is designed for use with 2D textures. It is recommended to 
  */
 public class GLTexture {
@@ -37,7 +37,7 @@ public class GLTexture {
     
     /**
      * Create the OpenGL Texture Object.
-     * </p>
+     * <p>
      * Must be called before configuring the texture.
      */
     public void create(ByteBuffer pixels, int width, int height,
@@ -69,7 +69,7 @@ public class GLTexture {
     
     /**
      * Configure the behavior of texture coordinates.
-     * </p>
+     * <p>
      * The horizontal texture coordinate axis may be called the x, s, or u axis
      * and the vertical axis may be called the y, t, or v axis.
      *
@@ -105,10 +105,10 @@ public class GLTexture {
     
     /**
      * Unnecessary if texture is pushed directly after configuration.
-     * </p>
+     * <p>
      * Unbinds the texture if it was bound before.
      *
-     * @see #push(ByteBuffer, int)
+     * @see #push(ByteBuffer, int, int, int, int, int)
      */
     public void configureEnd() {
         if (configuring) {
@@ -124,6 +124,9 @@ public class GLTexture {
     }
     
     public void disable() {
+        // TODO: How to properly unbind after binding?
+        // This setup seemingly allows for targets to be left bound on
+        // different texture units. Does it *really* matter?
         GLTexture.unbind(glTarget);
     }
     

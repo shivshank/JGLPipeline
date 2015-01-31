@@ -9,15 +9,15 @@ import static org.lwjgl.opengl.GL20.*;
 
 /**
  * JGLPipeline's central class. Used to setup, render, and cleanup.
- * <p/>
+ * <p>
  * <code>Pipeline</code> records all state needed to render. It does not
  * store much of the actual data, like vertices and uniforms; Pipeline
  * only stores references.
- * <p/>
+ * <p>
  * In terms of OpenGL, <code>Pipeline</code> couples a ProgramPipeline (or
  * OpenGL Program, if not supported) with VAOs (or their related state, if
  * not supported).
- * <p/>
+ * <p>
  * NOTE: Separable programs and VAOs not yet supported.
  */
 public class Pipeline {
@@ -69,11 +69,11 @@ public class Pipeline {
         
         /**
          * Create a new shader that will only be used in one program.
-         * </p>
+         * <p>
          * After program creation, this shader will be automatically
          * invalidated. Continuing to use this object will result in undefined
          * behavior.
-         * </p>
+         * <p>
          * Pass false as second parameter to disable this behavior.
          *
          * @param shaderType the OpenGL shader type, such as GL_VERTEX_SHADER
