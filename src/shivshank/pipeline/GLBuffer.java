@@ -44,7 +44,9 @@ public class GLBuffer {
 	 * @param data
 	 */
 	public void push(ByteBuffer data) {
+        bind();
 		glBufferData(glTarget, data, glUsage);
+        GLBuffer.unbind(glTarget);
 	}
 	
     /**
@@ -64,7 +66,9 @@ public class GLBuffer {
 	 * @param data The raw data
 	 */
 	public void update(long byteOffset, ByteBuffer data) {
+        bind();
 		glBufferSubData(glTarget, byteOffset, data);
+        GLBuffer.unbind(glTarget);
 	}
 	
     /**
