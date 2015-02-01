@@ -87,18 +87,23 @@ public class Model {
         }
 	}
     
-    private HashMap<GLBuffer, ShaderInput> captures;
+    private HashMap<GLBuffer, ShaderInput> vboCaptures;
+    private HashMap<GLTexture, Integer> texCaptures;
     private int count;
     
     public Model() {
-        captures = new HashMap<GLBuffer, ShaderInput>();
+        vboCaptures = new HashMap<GLBuffer, ShaderInput>();
     }
     
     public void create() {
     }
     
     public void capture(GLBuffer buffer, ShaderInput in) {
-        captures.put(buffer, in);
+        vboCaptures.put(buffer, in);
+    }
+    
+    public void capture(GLTexture tex, int texUnit) {
+        texCaptures.put(tex, texUnit);
     }
     
     public void setCount(int c) {
@@ -113,16 +118,22 @@ public class Model {
     }
     
     protected void enable() {
-        for (Map.Entry<GLBuffer, ShaderInput> e : captures.entrySet()) {
+        for (Map.Entry<GLBuffer, ShaderInput> e : vboCaptures.entrySet()) {
             e.getKey().bind();
             e.getValue().enable();
+        }
+        for (Map.Entry<GLTexture, Integer> e : texCaptures.entrySet()) {
+            e.getKey().enable(e.getValue());
         }
         GLBuffer.unbind(GL_ARRAY_BUFFER);
     }
     
     protected void disable() {
-        for (Map.Entry<GLBuffer, ShaderInput> e : captures.entrySet()) {
+        for (Map.Entry<GLBuffer, ShaderInput> e : vboCaptures.entrySet()) {
             e.getValue().disable();
+        }
+        for (Map.Entry<GLTexture, Integer> e : texCaptures.entrySet()) {
+            e.getKey().disable();
         }
     }
 }
