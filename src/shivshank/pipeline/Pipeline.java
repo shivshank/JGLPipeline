@@ -175,6 +175,10 @@ public class Pipeline {
         }
     }
     
+    public int getUniformLocation(String uniform) {
+        return glGetUniformLocation(glName, uniform);
+    }
+    
     public int getInputLocation(String inputName) {
         return glGetAttribLocation(glName, inputName);
     }
