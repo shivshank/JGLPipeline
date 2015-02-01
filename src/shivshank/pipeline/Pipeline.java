@@ -135,6 +135,10 @@ public class Pipeline {
     public Pipeline() {
     }
     
+    public void prepareInputLocation(String inputName, int index) {
+        glBindAttribLocation(glName, index, inputName);
+    }
+    
     public void create(Shader ... shaders) {
         glName = glCreateProgram();
         
@@ -170,9 +174,8 @@ public class Pipeline {
         }
     }
     
-    public void destroy() {
-        glDeleteProgram(glName);
-        glName = 0;
+    public int getInputLocation(String inputName) {
+        return glGetAttribLocation(glName, inputName);
     }
     
     public void render(Model m) {
@@ -187,5 +190,10 @@ public class Pipeline {
     
     public void draw(Model m) {
         glDrawArrays(GL_TRIANGLES, 0, m.getCount());
+    }
+    
+    public void destroy() {
+        glDeleteProgram(glName);
+        glName = 0;
     }
 }
