@@ -101,9 +101,10 @@ public class Pipeline {
         public void create(String source) {
             glName = glCreateShader(glShaderType);
             
-            if (glName == 0)
+            if (glName == 0) {
                 throw new PipelineException("ERROR: OpenGL failed to create "
                                            + "shader.");
+            }
 
             glShaderSource(glName, source);
             glCompileShader(glName);
