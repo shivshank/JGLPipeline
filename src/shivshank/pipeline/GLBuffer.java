@@ -2,6 +2,8 @@ package shivshank.pipeline;
 
 import java.nio.ByteBuffer;
 
+import org.lwjgl.BufferUtils;
+
 import static org.lwjgl.opengl.GL15.*;
 
 /**
@@ -45,6 +47,16 @@ public class GLBuffer {
 		glBufferData(glTarget, data, glUsage);
 	}
 	
+    /**
+     * Float array version of {@link #push(ByteBuffer)}.
+     */
+    public void push(float[] data) {
+        ByteBuffer b = BufferUtils.createByteBuffer(data.length * 4);
+        // backing arrays are the same; do not flip the buffer
+        b.asFloatBuffer().put(data);
+        push(b);
+    }
+
 	/**
 	 * Update buffer storage without reallocating.
 	 * 
@@ -55,6 +67,16 @@ public class GLBuffer {
 		glBufferSubData(glTarget, byteOffset, data);
 	}
 	
+    /**
+     * Float array version of {@link #push(ByteBuffer)}.
+     */
+    public void update(long byteOffset, float[] data) {
+        ByteBuffer b = BufferUtils.createByteBuffer(data.length * 4);
+        // backing arrays are the same; do not flip the buffer
+        b.asFloatBuffer().put(data);
+        update(byteOffset, b);
+    }
+    
 	/**
 	 * Free the storage on the GPU.
 	 * <p>
