@@ -40,8 +40,7 @@ public class GLTexture {
      * <p>
      * Must be called before configuring the texture.
      */
-    public void create(ByteBuffer pixels, int width, int height,
-                       int glPixelType, int gl) {
+    public void create() {
         int name = glGenTextures();
     }
     
@@ -94,6 +93,8 @@ public class GLTexture {
      * @param width the width of the texture, in pixels
      * @param height the height of the texture, in pixels
      * @param mipmapLevel the level to upload
+     * @param glType the type of each component
+     * @param glPixelFormat the layout of memory, such as BGR, RGB, etc
      */
     public void push(ByteBuffer pixels, int width, int height, int mipmapLevel,
                      int glType, int glPixelFormat) {
