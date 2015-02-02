@@ -104,6 +104,7 @@ public class Model {
     
     public Model() {
         vboCaptures = new HashMap<GLBuffer, ShaderInput>();
+        texCaptures = new HashMap<GLTexture, TextureInput>();
     }
     
     public void create() {
