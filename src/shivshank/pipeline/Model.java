@@ -87,8 +87,19 @@ public class Model {
         }
 	}
     
+    private static class TextureInput {
+    
+        int texUnit;
+        int samplerPos;
+        
+        TextureInput(int unit, int sampler) {
+            texUnit = unit;
+            samplerPos = sampler;
+        }
+    }
+    
     private HashMap<GLBuffer, ShaderInput> vboCaptures;
-    private HashMap<GLTexture, Integer[]> texCaptures;
+    private HashMap<GLTexture, TextureInput> texCaptures;
     private int count;
     
     public Model() {
@@ -103,7 +114,7 @@ public class Model {
     }
     
     public void capture(GLTexture tex, int texUnit, int samplerPos) {
-        texCaptures.put(tex, new Integer[] {texUnit, samplerPos});
+        texCaptures.put(tex, new TextureInput(texUnit, samplerPos));
     }
     
     public void setCount(int c) {
@@ -122,9 +133,9 @@ public class Model {
             e.getKey().bind();
             e.getValue().enable();
         }
-        for (Map.Entry<GLTexture, Integer[]> e : texCaptures.entrySet()) {
-            Integer[] i = e.getValue();
-            e.getKey().enable(i[0], i[1]);
+        for (Map.Entry<GLTexture, TextureInput> e : texCaptures.entrySet()) {
+            TextureInput i = e.getValue();
+            e.getKey().enable(i.texUnit, i.samplerPos);
         }
         GLBuffer.unbind(GL_ARRAY_BUFFER);
     }
@@ -133,7 +144,7 @@ public class Model {
         for (Map.Entry<GLBuffer, ShaderInput> e : vboCaptures.entrySet()) {
             e.getValue().disable();
         }
-        for (Map.Entry<GLTexture, Integer[]> e : texCaptures.entrySet()) {
+        for (Map.Entry<GLTexture, TextureInput> e : texCaptures.entrySet()) {
             e.getKey().disable();
         }
     }
