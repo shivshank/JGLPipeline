@@ -21,16 +21,33 @@ import static org.lwjgl.opengl.GL20.*;
  * {@link #enable(int, int)} and {@link #disable()}.
  * <p>
  * If you create a texture, be sure to specify the number of mipmaps and upload
- * the proper amount, otherwise the texture is incomplete and cannot be
+ * the proper amount, otherwise the texture object is incomplete and cannot be
  * rendered.
  * <p>
- * This class is designed for use with 2D textures. It is recommended to 
+ * This class is designed for use with 2D textures. It is recommended to extend
+ * it if you want to support other targets.
  */
 public class GLTexture {
-    private int glName;
-    private int glTarget;
+    protected int glName;
+    protected int glTarget;
     private boolean configuring = false;
     
+    /**
+	 * Unbind the buffer bound to target.
+	 * <p>
+	 * Binding a buffer to a target is a static/global state change.
+	 *  
+	 * @param target The target to unbind, such as GL_ARRAY_BUFFER
+	 */
+    public static void unbind(int target) {
+        glBindTexture(target, 0);
+    }
+    
+    /**
+     * Create a new GLTexture.
+     *
+     * @param the target to this texture will bind to; specifies dimensions
+     */
     public GLTexture(int target) {
         glTarget = target;
     }
@@ -44,10 +61,40 @@ public class GLTexture {
         int name = glGenTextures();
     }
     
-    public static void configurePixelAlignment(int a) {
-        glPixelStorei(GL_UNPACK_ALIGNMENT, a);
+    /**
+     * Bind the texture if it isn't already bound.
+     * <p>
+     * Calling this function is optional. It is public for the sake of symmetry.
+     * <p>
+     * Beware, manually binding another texture while this texture is being
+     * configured will invalidate the configuring flag on this object.
+     */
+    public void configureBegin() {
+        if (!configuring) {
+            bind();
+            configuring = true;
+        }
     }
     
+    /**
+     * Set how OpenGL interprets the pixels in uploaded textures.
+     * <p>
+     * Packed alignment means that all rows are consecutive, with no padding.
+     * <p>
+     * Pixel alignment does not affect padding between pixels. It affects
+     * padding between rows. An alignment of 4 means that a rows is padded to
+     * have a length divisible by 4 (length % 4 == 0).
+     *
+     * @param alignment 1 for packed, 2 for even, 4 for word, 8 for double-word
+     */
+    public static void configurePixelAlignment(int alignment) {
+        glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+        glPixelStorei(GL_PACK_ALIGNMENT, alignment);
+    }
+    
+    /**
+     * Set how this texture's mipmaps should be filtered.
+     */
     public void configureFiltering(int minFilter, int magFilter) {
         configureBegin();
         glTexParameteri(glTarget, GL_TEXTURE_MAG_FILTER, magFilter);
@@ -81,6 +128,12 @@ public class GLTexture {
         glTexParameteri(glTarget, GL_TEXTURE_WRAP_T, glWrapY);
     }
     
+    /**
+     * Generic OpenGL Texture configuration function.
+     *
+     * @param param the OpenGL parameter
+     * @param value the integer value to set for that parameter
+     */
     public void configureIntParam(int param, int value) {
         configureBegin();
         glTexParameteri(glTarget, param, value);
@@ -105,6 +158,15 @@ public class GLTexture {
     }
     
     /**
+     * @return true if this texture is supposed to be bound
+     */
+    public boolean isConfiguring() {
+        return configuring;
+    }
+    
+    /**
+     * Unbind the texture if a configure function was called previously.
+     * <p>
      * Unnecessary if texture is pushed directly after configuration.
      * <p>
      * Unbinds the texture if it was bound before.
@@ -118,36 +180,37 @@ public class GLTexture {
         }
     }
     
-    public void enable(int textureUnit, int samplerLocation) {
+    /**
+     * Bind this a sampler and this texture to a Texture Unit.
+     */
+    protected void enable(int textureUnit, int samplerLocation) {
         glActiveTexture(GL_TEXTURE0 + textureUnit);
         bind();
         glUniform1i(samplerLocation, textureUnit);
     }
     
-    public void disable() {
+    /**
+     * Unbind this texture.
+     */
+    protected void disable() {
         // TODO: How to properly unbind after binding?
         // This setup seemingly allows for targets to be left bound on
         // different texture units. Does it *really* matter?
         GLTexture.unbind(glTarget);
     }
     
+    /**
+     * Free this texture's OpenGL storage.
+     */
     public void destroy() {
         glDeleteTextures(glName);
         glName = 0;
     }
     
+    /**
+     * Bind this texture.
+     */
     protected void bind() {
         glBindTexture(glTarget, glName);
-    }
-    
-    protected static void unbind(int target) {
-        glBindTexture(target, 0);
-    }
-    
-    protected void configureBegin() {
-        if (!configuring) {
-            bind();
-            configuring = true;
-        }
     }
 }
