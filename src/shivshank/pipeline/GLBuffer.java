@@ -10,34 +10,70 @@ import static org.lwjgl.opengl.GL15.*;
  * Represents an OpenGL Buffer Object.
  * <p>
  * Stores the associated name and target.
+ * <p>
+ * Use GL_ARRAY_BUFFER target for
+ * {@link shivshank.pipeline.Model.ShaderInput ShaderInput} data.
  */
 public class GLBuffer {
-	// TODO: Should GLBuffer store type data and convert offsets to bytes for the user?
+	// TODO: Should GLBuffer store type data?
 	
-	private int glName;
-	private int glTarget;
-	private int glUsage;
-	
-	public GLBuffer(int target) {
-		this(target, GL_STATIC_DRAW);
+	protected int glName;
+	protected int glTarget;
+	protected int glUsage;
+    
+	/**
+	 * Unbind the buffer bound to target.
+	 * <p>
+	 * Binding a buffer to a target is a static/global state change.
+	 *  
+	 * @param target The target to unbind, such as GL_ARRAY_BUFFER
+	 */
+	public static void unbind(int target) {
+		glBindBuffer(target, 0);
+		// TODO: Technically its local to the thread's context... does that
+		// 		 need to be handled differently?
 	}
-	
-	public GLBuffer(int target, int usage) {
+    
+    /**
+     * Create a new GLBuffer.
+     *
+     * @target The target this object binds to
+     * @usage How this object will typically be used by OpenGL
+     */
+    public GLBuffer(int target, int usage) {
 		glTarget = target;
 		glName = 0;
 		glUsage = usage;
 	}
-	
+    
+    /**
+     * Simple version of {@link #GLBuffer(int, int) of constructor}.
+     */
+	public GLBuffer(int target) {
+		this(target, GL_STATIC_DRAW);
+	}
+    
 	/**
-	 * Create an OpenGL Buffer object. Does not allocate storage.
+	 * Create an OpenGL Buffer object.
 	 *  
-	 * @return true if OpenGL object creation succeeded.
+	 * @throws PipelineException if creation failed
 	 */
-	public boolean create() {
+	public void create() {
 		glName = glGenBuffers();
-		return glName != 0;
+		if (glName == 0)
+            throw new PipelineException("Buffer creation failed.");
 	}
 	
+    /**
+     * Push and create version of {@link #create()}.
+     * 
+     * @throws PipelineException if creation failed
+     */
+    public void create(ByteBuffer data) {
+        create();
+        push(data);
+    }
+    
 	/**
 	 * Reallocate storage for the buffer and push <code>data</code> to the GPU.
 	 * 
@@ -93,20 +129,10 @@ public class GLBuffer {
 		glName = 0;
 	}
 	
+    /**
+     * Bind the OpenGL object.
+     */
 	protected void bind() {
 		glBindBuffer(glTarget, glName);
-	}
-	
-	/**
-	 * Unbind the buffer bound to target.
-	 * <p>
-	 * Binding a buffer to a target is a static/global state change.
-	 *  
-	 * @param target An integer constant such as GL_ARRAY_BUFFER
-	 */
-	protected static void unbind(int target) {
-		glBindBuffer(target, 0);
-		// TODO: Technically its local to the thread's context... does that
-		// 		 need to be handled differently?
 	}
 }
