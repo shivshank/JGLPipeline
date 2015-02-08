@@ -6,10 +6,31 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 
+/**
+ * A Model relates ShaderInputs to Buffers, and Textures to Uniforms.
+ * <p>
+ * {@link Pipeline} uses a Model to render state. Simply create the necessary
+ * {@link GLTexture}s and {@link GLBuffer}s and then use a Model
+ * object to capture them.
+ * <p>
+ * Capturing objects establishes their relationships. To relate a ShaderInput
+ * (which is the vertex shader's attribute) to (part of) an OpenGL Buffer, use
+ * {@link capture(ShaderInput, GLBuffer)}. ShaderInputs have stride and offset
+ * parameters, meaning that one GLBuffer can store several different attributes.
+ * <p>
+ * When this model is rendered, the captures tell GLSL where to find its data.
+ * <p>
+ * Textures bind differently. GLSL uses uniform samplers to represent textures.
+ * Instead of binding a client side texture directly to a sampler, OpenGL binds
+ * textures to texture units. A sampler is then associated with a texture unit.
+ * A sampler accesses a texture via its binding to a texture unit.
+ * <p>
+ * A Model is similar to a VAO but also manages textures.
+ */
 public class Model {
 
     /**
-     * Used to reference the layout and storage of vertex shader inputs.
+     * References the layout and storage of vertex shader inputs.
      * <p>
      * Shader inputs are also known as vertex attributes. A ShaderInput 
      * is independent of its source. Buffer bindings are created at capture
@@ -26,6 +47,7 @@ public class Model {
         private final int stride;
         private final boolean normalized;
         private int index;
+        boolean created;
         
         /**
          * Densely packed ShaderInput constructor.
@@ -55,14 +77,15 @@ public class Model {
          */
         public ShaderInput create(int index) {
             this.index = index;
+            created = true;
             return this;
         }
     
         /**
-         * Invalidate this object for capture; set index to 0.
+         * Invalidate this object for capture.
          */
         public void destroy() {
-            index = 0;
+            created = false;
         }
         
         /**
@@ -85,8 +108,15 @@ public class Model {
         public boolean isCreated() {
             return index != 0;
         }
+        
+        public String toString() {
+            return "vattrib " + index + " o>> " + offset + " s__ " + stride;
+        }
 	}
     
+    /**
+     * Used to store sampler locations and relevant texture unit.
+     */
     private static class TextureInput {
     
         int texUnit;
@@ -98,41 +128,75 @@ public class Model {
         }
     }
     
-    private HashMap<GLBuffer, ShaderInput> vboCaptures;
+    private HashMap<ShaderInput, GLBuffer> vboCaptures;
     private HashMap<GLTexture, TextureInput> texCaptures;
     private int count;
     
+    /**
+     * Create a new model ready for capturing.
+     */
     public Model() {
-        vboCaptures = new HashMap<GLBuffer, ShaderInput>();
+        vboCaptures = new HashMap<ShaderInput, GLBuffer>();
         texCaptures = new HashMap<GLTexture, TextureInput>();
     }
     
+    /**
+     * Exists for consistency and forward compatibility. Does nothing.
+     */
     public void create() {
     }
     
-    public void capture(GLBuffer buffer, ShaderInput in) {
-        vboCaptures.put(buffer, in);
+    /**
+     * Relate a ShaderInput to a GLBuffer.
+     * <p>
+     * The render call will use the ShaderInput interpret the data in the
+     * GLBuffer.
+     */
+    public void capture(ShaderInput in, GLBuffer buffer) {
+        if (in.created == false) {
+            throw new PipelineException("Shader input was not created: "
+                                   + in.toString());
+        }
+
+        vboCaptures.put(in, buffer);
     }
     
+    /**
+     * Relate a texture and sampler to a texture unit.
+     */
     public void capture(GLTexture tex, int texUnit, int samplerPos) {
         texCaptures.put(tex, new TextureInput(texUnit, samplerPos));
     }
     
+    /**
+     * Set the number of vertices.
+     * <p>
+     * This value is used in the draw call.
+     */
     public void setCount(int c) {
         count = c;
     }
     
+    /**
+     * Get the number of vertices.
+     */
     public int getCount() {
         return count;
     }
     
+    /**
+     * Exists for consistency and forward compatibility. Does nothing.
+     */
     public void destroy() {
     }
     
+    /**
+     * Ready the associated textures, samplers, and buffers for rendering.
+     */
     protected void enable() {
-        for (Map.Entry<GLBuffer, ShaderInput> e : vboCaptures.entrySet()) {
-            e.getKey().bind();
-            e.getValue().enable();
+        for (Map.Entry<ShaderInput, GLBuffer> e : vboCaptures.entrySet()) {
+            e.getKey().enable();
+            e.getValue().bind();
         }
         for (Map.Entry<GLTexture, TextureInput> e : texCaptures.entrySet()) {
             TextureInput i = e.getValue();
@@ -141,9 +205,12 @@ public class Model {
         GLBuffer.unbind(GL_ARRAY_BUFFER);
     }
     
+    /**
+     * Cleanup the associated textures, samplers, and buffers after rendering.
+     */
     protected void disable() {
-        for (Map.Entry<GLBuffer, ShaderInput> e : vboCaptures.entrySet()) {
-            e.getValue().disable();
+        for (Map.Entry<ShaderInput, GLBuffer> e : vboCaptures.entrySet()) {
+            e.getKey().disable();
         }
         for (Map.Entry<GLTexture, TextureInput> e : texCaptures.entrySet()) {
             e.getKey().disable();
