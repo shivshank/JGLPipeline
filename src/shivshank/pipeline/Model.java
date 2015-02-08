@@ -195,8 +195,8 @@ public class Model {
      */
     protected void enable() {
         for (Map.Entry<ShaderInput, GLBuffer> e : vboCaptures.entrySet()) {
-            e.getKey().enable();
             e.getValue().bind();
+            e.getKey().enable();
         }
         for (Map.Entry<GLTexture, TextureInput> e : texCaptures.entrySet()) {
             TextureInput i = e.getValue();
