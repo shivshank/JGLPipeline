@@ -37,8 +37,8 @@ public class GLBuffer {
     /**
      * Create a new GLBuffer.
      *
-     * @target The target this object binds to
-     * @usage How this object will typically be used by OpenGL
+     * @param target The target this object binds to
+     * @param usage How this object will typically be used by OpenGL
      */
     public GLBuffer(int target, int usage) {
 		glTarget = target;

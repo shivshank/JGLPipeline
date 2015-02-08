@@ -46,7 +46,8 @@ public class GLTexture {
     /**
      * Create a new GLTexture.
      *
-     * @param the target to this texture will bind to; specifies dimensions
+     * @param target the target to this texture will bind to; specifies
+     *               dimensions
      */
     public GLTexture(int target) {
         glTarget = target;
@@ -167,9 +168,8 @@ public class GLTexture {
     /**
      * Unbind the texture if a configure function was called previously.
      * <p>
-     * Unnecessary if texture is pushed directly after configuration.
-     * <p>
-     * Unbinds the texture if it was bound before.
+     * Calling this is optional if this texture is pushed directly after
+     * configuration.
      *
      * @see #push(ByteBuffer, int, int, int, int, int)
      */
