@@ -10,24 +10,36 @@ import static org.lwjgl.opengl.GL20.*;
 /**
  * JGLPipeline's central class. Used to setup, render, and cleanup.
  * <p>
- * <code>Pipeline</code> records all state needed to render. It does not
- * store much of the actual data, like vertices and uniforms; Pipeline
- * only stores references.
+ * <code>Pipeline</code> represents an OpenGL Program.
  * <p>
- * In terms of OpenGL, <code>Pipeline</code> couples a ProgramPipeline (or
- * OpenGL Program, if not supported) with VAOs (or their related state, if
- * not supported).
+ * Before calling create, prepare the Pipeline by binding ShaderInputs to
+ * locations, see {@link #prepareInputLocation(String, int)}.
  * <p>
- * NOTE: Separable programs and VAOs not yet supported.
+ * To render with a Pipeline, the Pipeline needs to be linked with shaders. Link
+ * with shaders by calling {@link #create(Shader ...) create}.
+ * <p>
+ * The default draw call used by Pipeline is simply glDrawArrays. For more
+ * elaborate draw calls, override the method {@link #draw(Model)}, and possibly
+ * {@link #render(Model)}.
  */
 public class Pipeline {
     
+    /**
+     * Message-less version of {@link #checkGLError(String)}.
+     */
     public static boolean checkGLError() {
         return checkGLError(null);
     }
     
+    /**
+     * Check if there are OpenGL errors and print them along with
+     * <code>message</code>.
+     * <p>
+     * Note: LWJGL contains a method with the same name, but uses exceptions.
+     *
+     * @return true if at least one error occured.
+     */
     public static boolean checkGLError(String message) {
-        // TODO: Should use actual logging?
         // LWJGL also contains a method for this...
         if (message == null)
             message = "OPENGL ERROR: ";
@@ -62,9 +74,17 @@ public class Pipeline {
         return occured;
     }
     
+    /**
+     * Represents an OpenGL Shader.
+     * <p>
+     * The location of an input (also known as an "attribute" for vertex shaders
+     * and a "varrying" for fragment shaders) is determined either in the shader
+     * source, a call to {@link Pipeline#prepareInputLocation(String, int)}
+     * or by the driver.
+     */
 	public static class Shader {
 		protected int glName;
-        private int glShaderType;
+        protected int glShaderType;
         private boolean autoDelete;
         
         /**
@@ -84,6 +104,8 @@ public class Pipeline {
         
         /**
          * Create a shader object that can be used with many programs.
+         * <p>
+         * To use this with many programs, the second argument must be false.
          *
          * @param shaderType the OpenGL shader type, such as GL_VERTEX_SHADER
          * @param autoDelete enable/disable auto invalidation after linking
@@ -131,15 +153,35 @@ public class Pipeline {
         }
 	}
 	
-    private int glName;
+    protected int glName;
     
+    /**
+     * Create a new Pipeline.
+     */
     public Pipeline() {
     }
     
+    /**
+     * Bind a ShaderInput to a user defined location/index.
+     * <p>
+     * This must be called before create. Calling this method contrasts with
+     * using {@link #getInputLocation(String) getInputLocation} to query
+     * the locations automatically assigned by the driver.
+     * 
+     * @param inputName the ShaderInput name to use this index
+     * @param index the location GLSL should use for in/attribute inputName
+     * @see shivshank.pipeline.Model.ShaderInput
+     */
     public void prepareInputLocation(String inputName, int index) {
         glBindAttribLocation(glName, index, inputName);
     }
     
+    /**
+     * Create an OpenGL program and attach and link Shaders to it.
+     * <p>
+     * Automatically deletes qualifying Shaders, see
+     * {@link Shader#Shader(int, boolean)}.
+     */
     public void create(Shader ... shaders) {
         glName = glCreateProgram();
         
@@ -183,6 +225,12 @@ public class Pipeline {
         return glGetAttribLocation(glName, inputName);
     }
     
+    /**
+     * Render a Model.
+     *
+     * @param m the Model to be rendered using its associated textures and
+     *          buffers.
+     */
     public void render(Model m) {
         glUseProgram(glName);
         m.enable();
@@ -193,10 +241,20 @@ public class Pipeline {
         glUseProgram(0);
     }
     
-    public void draw(Model m) {
+    /**
+     * Override this method to customize the draw call.
+     * <p>
+     * The default draw call is glDrawArrays.
+     *
+     * @param m the model that needs to be drawn
+     */
+    protected void draw(Model m) {
         glDrawArrays(GL_TRIANGLES, 0, m.getCount());
     }
     
+    /**
+     * Destroys the OpenGL program.
+     */
     public void destroy() {
         glDeleteProgram(glName);
         glName = 0;
