@@ -15,7 +15,11 @@ import static org.lwjgl.opengl.GL20.*;
  * Before a texture is used it MUST be created and configured. Create the object
  * first and then call the appropriate configuration methods.
  * <p>
- * After configuration, push a texture image.
+ * After configuration, push a texture image. There are two methods to
+ * explicitly start and end configuration, configureBegin and configureEnd.
+ * Calling configureBegin is never necessary, but can be included for aesthetic
+ * purposes. {@link #configureEnd()} must be called if you are not pushing
+ * texture pixels directly after configuration.
  * <p>
  * To use a GLTexture, capture it with a model or render manually by calling
  * {@link #enable(int, int)} and {@link #disable()}.
@@ -78,11 +82,11 @@ public class GLTexture {
     }
     
     /**
-     * Set how OpenGL interprets the pixels in uploaded textures.
+     * Set how OpenGL interprets the pixels in uploaded and downloaded textures.
      * <p>
      * Packed alignment means that all rows are consecutive, with no padding.
      * <p>
-     * Pixel alignment does not affect padding between pixels. It affects
+     * Row alignment does not affect padding between pixels. It affects
      * padding between rows. An alignment of 4 means that a rows is padded to
      * have a length divisible by 4 (length % 4 == 0).
      *
