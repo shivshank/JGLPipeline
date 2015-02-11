@@ -39,7 +39,7 @@ public class Model {
      * The state of a <code>ShaderInput</code> is typically used for calls to
      * glVertexAttribPointer.
      */
-	public static class ShaderInput {
+    public static class ShaderInput {
 		
         private final int comps;
         private final int type;
@@ -112,7 +112,7 @@ public class Model {
         public String toString() {
             return "vattrib " + index + " o>> " + offset + " s__ " + stride;
         }
-	}
+    }
     
     /**
      * Used to store sampler locations and relevant texture unit.
