@@ -188,9 +188,9 @@ public class GLTexture {
      * Bind this a sampler and this texture to a Texture Unit.
      */
     protected void enable(int textureUnit, int samplerLocation) {
+        glUniform1i(samplerLocation, textureUnit);
         glActiveTexture(GL_TEXTURE0 + textureUnit);
         bind();
-        glUniform1i(samplerLocation, textureUnit);
     }
     
     /**
