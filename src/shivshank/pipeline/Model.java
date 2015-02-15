@@ -131,7 +131,8 @@ public class Model {
     private HashMap<ShaderInput, GLBuffer> vboCaptures;
     private HashMap<GLTexture, TextureInput> texCaptures;
     private int count;
-    
+    private GLBuffer elements;
+
     /**
      * Create a new model ready for capturing.
      */
@@ -166,6 +167,34 @@ public class Model {
      */
     public void capture(GLTexture tex, int texUnit, int samplerPos) {
         texCaptures.put(tex, new TextureInput(texUnit, samplerPos));
+    }
+    
+    /**
+     * Set an element array buffer for this Model.
+     * <p>
+     * Does nothing by default. This method is meant to be used
+     * by a custom overriden draw method in a Pipeline.
+     */
+    public void setElementBuffer(GLBuffer elements) {
+        this.elements = elements;
+    }
+    
+    /**
+     * Bind an Element Array Buffer.
+     */
+    public void enableElementBuffer() {
+        if (elements == null)
+            throw new PipelineException("Model has no element buffer (null).");
+        elements.bind();
+    }
+    
+    /**
+     * Unbind an Element Array Buffer.
+     */
+    public void disableElementBuffer() {
+        if (elements == null)
+            throw new PipelineException("Model has no element buffer (null).");
+        GLBuffer.unbind(GL_ELEMENT_ARRAY_BUFFER);
     }
     
     /**
