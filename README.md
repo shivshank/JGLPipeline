@@ -1,7 +1,7 @@
 # JGLPipeline
 
 >
-> **NOTE**: In general, I've given up on this for now. Using and testing this library was a complete failure. It only increased code indirection and debugging frustration. To actually be of use, the library needs to be restructured to be more high level. Until then, I wouldn't reccomend actually using it.
+> **NOTE**: In general, I've given up on this for now. Using and testing this library was a complete failure. It only increased code indirection and debugging frustration. To actually be of use, the library needs to be restructured to be more high level (i.e., instead of wrapping the low levelish GL, make it easier to use). Until then, I wouldn't reccomend actually using it.
 >
 
 JGLPipeline is a simple OpenGL Java wrapper. The library is designed to abstract away some of the OpenGL API, so it can be used even if you have minimal knowledge. In addition, it can be used in tandem with custom LWJGL code and the library is easily extended.
